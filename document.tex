@@ -1,0 +1,255 @@
+%\documentclass[a4paper,12pt]{article}%report
+ 
+ \documentclass[a4paper,12pt]{article}%report
+ % das hier ist eine font
+ %\usepackage{newcent}
+ 
+\usepackage{amsthm}
+\usepackage[ngerman]{babel}     
+\usepackage[utf8]{inputenc}      
+\usepackage {amsmath}
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage[arrow, matrix, curve]{xy}
+
+
+
+\usepackage{textpos}
+
+%\newenvironment{ex}{begdef}{enddef}
+% Theorem und Satz           
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{myDef}[thm]{Definition}
+% \newtheorem{thm}{Satz}[section]
+\newtheorem{ex}{Aufgabe}[section]
+% \newtheorem{myDef}[thm]{Definition}
+\newtheorem{myExmpl}[thm]{Beispiel}
+\newtheorem{myCmmt}[thm]{Bemerkung}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{myKor}[thm]{Korollar}
+\newtheorem{myV}{Veranschaulichung}
+\newtheorem{myLemma}[thm]{Lemma}
+
+\usepackage[table,xcdraw]{xcolor}
+
+\newcommand{\beg}[1]{\textsc{#1}}
+\newcommand{\openEx}[1]{ {\bf Aufgabe #1:}}
+\newcommand{\openAns}{ {\bf Antwort:~}}
+
+% neue eigene shortcuts
+\newcommand{\N}{\mathbbm N}
+\newcommand{\K}{\mathbbm K}
+\newcommand{\R}{\mathbbm R}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\PP}{\mathbbm P}
+%\newcommand{\r}{\mathbbm R}
+\newcommand{\C}{\mathbbm C}
+\newcommand{\Z}{\mathbbm Z}
+\newcommand{\zuZeigen}{ \mathrm{Z\kern-.5em\raise-0.4ex\hbox{Z}}}
+\newcommand{\hnot}[1]{{\it #1}}
+\newcommand{\Hnot}[1]{{\bf #1}}
+
+\newcommand{\refFootnote}[1]{\footnote{#1}}
+\definecolor{rahmen}{rgb}{.7,0.9,0.8}    
+\definecolor{grund}{gray}{.99}           
+\definecolor{schrift_box}{cmyk}{0.9,0.7,0.8,0}   
+\definecolor{whites}{cmyk}{0, 0, 0,0}   
+\definecolor{schrift_normal}{gray}{0}   
+\definecolor{ekelig}{cmyk}{0.1,0.9,0.9,0}   
+\definecolor{ekeligHintergrund}{cmyk}{0.1,0.1,0.9,0}   
+  
+  \newcommand{\defWord}[1]{{\rm #1}}
+\newcommand{\openBox}[1]{
+   \color{grund}
+  
+  \fcolorbox{rahmen}{grund}{\fbox{ \color{schrift_box}\parbox{\dimexpr \linewidth - 2\fboxrule - 2\fboxsep}{#1}}}
+  \color{schrift_normal}}
+  
+\newcommand{\marker}[1]{
+   \color{ekelig}
+\fcolorbox{whites}{ekeligHintergrund}{
+    TODO: #1
+}
+    \color{schrift_normal}}
+  
+\newcommand{\openBoxx}[2]{
+   \color{grund}
+  
+  \fcolorbox{rahmen}{grund}{\fbox{ \color{schrift_box}\parbox{\dimexpr \linewidth - 2\fboxrule - 2\fboxsep}{#1}}{#2}}
+  \color{schrift_normal}}
+  
+% Das hier ist nur so einnkommentiert, da ich auf OS X nicht herausgefunden 
+% habe, wie man mathbbm zum Laufen kriegt.
+%\newcommand{\N}{N}
+%\newcommand{\K}{K}
+%\newcommand{\R}{R}%
+%\newcommand{\C}{C}
+%\newcommand{\Z}{Z}
+%\newcommand{\zuZeigen}{Z}
+
+\newcommand*{\nametag}[1]{%
+  \stepcounter{equation}%
+  \tag{\tagtext{#1}\tagcomma\tagnumber{\theequation}}%
+}
+\makeatletter% <-- anklicken liefert Erklärung
+\newcommand*{\eqnumref}[1]{%
+  \begingroup
+    \let\tagtext\@gobble
+    \let\tagcomma\relax
+    \eqref{#1}%
+  \endgroup
+}
+\newcommand*{\eqtextref}[1]{%
+  \begingroup
+    \let\tagcomma\relax
+    \let\tagnumber\@gobble
+    \ref{#1}%
+  \endgroup
+} 
+
+
+\newcommand{\grafik}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=\linewidth,height=\textheight,
+		keepaspectratio]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+\usepackage{cite}
+
+
+\newcommand{\grafikM}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=12.5cm,height=6.5cm]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+	
+
+\newcommand{\grafikMNon}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=\linewidth]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+
+\newcommand{\grafikMS}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[height=4cm]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+	
+
+\newcommand{\grafikMHalf}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=12.5cm,height=2.5cm]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+
+\usepackage{cite}
+
+
+
+
+\newcommand{\newDef}[1]{ {\bf #1} }
+
+\newcommand{\oldDef}[1]{ {\it #1} }
+
+
+
+
+\usepackage{blindtext}
+
+\usepackage{fancyhdr}%Kopf- und Fußzeile
+\renewcommand{\headrulewidth}{1pt} %Linie oben
+\fancyhf{}
+\fancyhead[L]{\leftmark} %Kopfzeile links bzw. innen
+\fancyhead[R]{\thepage} %Kopfzeile rechts bzw. außen
+
+
+%Das hier ist neu dazugekommen für automatische Wörtertrennung.
+\usepackage{xspace}
+
+
+
+\setlength\parindent{0pt}
+
+
+
+
+% zum abaendern wenn die Erklaerungen ausgeblendet werden sollen
+\newcommand{\invisible}[1]{#1}
+
+
+\newcommand{\lecture}[2]{\color{black} 
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.125cm)
+		{\bf Lecture {#1}}
+	\end{textblock*}
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.625cm)
+		#2
+	\end{textblock*}
+}
+\newcommand{\tutorial}[2]{\color{black} 
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.125cm)
+		{\bf Tutorial {#1}}
+	\end{textblock*}
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.625cm)
+		#2
+	\end{textblock*}
+}
+
+
+
+%cpp stuff
+
+%\setmonofont{Consolas} %to be used with XeLaTeX or LuaLaTeX
+\definecolor{bluekeywords}{rgb}{0,0,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.64,0.08,0.08}
+\definecolor{xmlcomments}{rgb}{0.5,0.5,0.5}
+\definecolor{types}{rgb}{0.17,0.57,0.68}
+
+\usepackage{listings}
+\lstset{language=C++,
+	captionpos=b,
+	%numbers=left, %Nummerierung
+	%numberstyle=\tiny, % kleine Zeilennummern
+	frame=lines, % Oberhalb und unterhalb des Listings ist eine Linie
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	escapeinside={(*@}{@*)},
+	commentstyle=\color{greencomments},
+	morekeywords={partial, var, value, get, set},
+	keywordstyle=\color{bluekeywords},
+	stringstyle=\color{redstrings},
+	basicstyle=\ttfamily\small,
+}
+
+
+% \newcommand{\erklaerung}[1]{}
+%opening
+\title{Advanced Enterprise Computing - Lecturenotes SoSe2016}
+\author{Julius Hülsmann}
+	\pagestyle{fancy}
+\begin{document}
+  \maketitle
+  \tableofcontents
+  \newpage
+
+
+
+
+\end{document}
