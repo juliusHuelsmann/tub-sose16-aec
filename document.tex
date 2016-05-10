@@ -17,8 +17,8 @@
 \newcommand{\tabitem}{~~\llap{\textbullet}~~}
 \usepackage[arrow, matrix, curve]{xy}
 
-
-
+\usepackage{multirow}
+ \usepackage[table,xcdraw]{xcolor}
 \usepackage{textpos}
 
 %\newenvironment{ex}{begdef}{enddef}
@@ -248,8 +248,189 @@
   \maketitle
   \tableofcontents
   \newpage
+\section{Replication and State Management\\ (25.04. - 09.05.)}
+
+
+\subsection{Motivation and Background}
+
+\subsubsection{Replication}
+\paragraph{Definition - Replication}
+Process of maintaining multiple Copies of an Entity (Data / Process / File ...)
+
+\paragraph{Advantages of Replication in General}
+\begin{itemize}
+	\item {\it System Availability / Fault tolerance} in case \\
+	A \quad Server fails \\
+	B \quad Data is corrputed.
+	\item {\it Performance / Scalability } \\
+	A \quad Workloads are spread across distributed Replicas \\
+	B \quad Geodistribution for processing demands in client's proximity
+\end{itemize} 
+
+\paragraph{Disadvantages of Replication in General}
+\begin{itemize}
+	\item Consistency vs. Performance
+\end{itemize}
+\paragraph{Kinds of Replication}
+In general there are the following kinds of \glqq physical\grqq ~Replication. We do only consider (B).\\
+\color{red} !!!!!!!!!!!!!!!!ueberpruefen am Ende!!!!!!!!!!!!!!! \color{black}
+%\grafik{../src/Grafik01}{(A) Improves the availability only in case the Server Replicas use a replica cache coherence mechanism
+%	(B) Improves the availability. Usually ment by the term \glqq Replication \grqq.}
+\paragraph{Replication Strategies}
+
+PAGE 17
+
+Synchronous vs. Asynchronous
+\begin{description}
+	\item[Synchronous / eager] 
+	\item[Asynchronous / lazy] 
+\end{description}
+
+Primary Copy vs. Update Everywhere
+\begin{description}
+	\item[Primary Copy / master] 
+	\item[Update Everywhere / group] 
+\end{description}
+\paragraph{ACID}~\\
+
+\begin{table}
+	
+	Name 				explanation				Protokolltitle 		implementation
+	Atomacity		either perform Transaction entirely or roll-back	atomic commitement protocol	2PC
+	
+	
+	
+\end{table}
+
+Atomiticity: \\
+Consistency: does not mean Data-Consistency but that the transaction produces consistent changes.\\
+Isolation: Transactions are isolated from one another\\
+Durability: Once the transaction is ready (commits) it remains.
+
+~\\
+Both the Atomitcity and the Isolation are managed by the {\bf Transaction Manager}
+{\it It acquires locks on behalf of all transactions and tries to come up with a serializable execution, that is, make it look like the transactions were executed one after the other.
+If the transactions follow 2 Phase Locking, serializability is guaranteed. Thus, the scheduler only needs to enforce 2PL behavior.}
+
+
+\paragraph{What happens to ACID in case of Replication?}
+Atomicity can be guaranteed using 2PC (but expensive)
+Problem: Serialization order must be the same at all replicas.
+
+{\bf Synchronous} ACID properties apply to all copy updates
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[]
+	\centering
+	\caption{My caption}
+	\label{my-label}
+	\begin{tabular}{|
+			>{\columncolor[HTML]{C0C0C0}}l |l|
+			>{\columncolor[HTML]{FFFFFF}}l |}
+		\hline
+		& \cellcolor[HTML]{C0C0C0}Procedure                                                                                                                  & \cellcolor[HTML]{C0C0C0}Advantages / Disadvantages                                                                                                                                                                                        \\ \hline
+		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} \begin{tabular}[c]{@{}l@{}}- ACID (no \\ Inconsistencies)\end{tabular}}                                                                                                                                             \\ \cline{3-3} 
+		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Synchronous}       & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}1 propagate Data \\  to everybody\\ \\ 2 Wait until \\ everybody responded\\ \\ 3 commit\end{tabular}} & {\color[HTML]{A38C8C} \begin{tabular}[c]{@{}l@{}}- High response time \\ (high execution time, \\ response time)\\ - Availability \\ (in case one Copy fails)\end{tabular}}                                                               \\ \hline
+		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} \begin{tabular}[c]{@{}l@{}}- Response Time\\ - Availability\end{tabular}}                                                                                                                                           \\ \cline{3-3} 
+		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Asynchronous}      & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}1 Update local copy\\ \\ 2 commit\\ \\ 3 Propagate Data\end{tabular}}                                  & {\color[HTML]{A38C8C} \begin{tabular}[c]{@{}l@{}}- Data inconsistency \\ (local read does not always \\ return the latest value)\\ - No guarantee that the changes \\ arrive at each copy\\ - Replication is not guaranteed\end{tabular}} \\ \hline
+		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} }                                                                                                                                                                                                                   \\ \cline{3-3} 
+		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Primary Copy}      & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}one Primary copy and\\  several read-only copies\end{tabular}}                                         & {\color[HTML]{A38C8C} }                                                                                                                                                                                                                   \\ \hline
+		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} }                                                                                                                                                                                                                   \\ \cline{3-3} 
+		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Update Everywhere} & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}Each site is able to\\  initiate changes\end{tabular}}                                                 & {\color[HTML]{A38C8C} }                                                                                                                                                                                                                   \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Managing Replication}
+\subsection{Implications of Replication}
+\subsection{Paxos and CRDTs}
+
+
+\section{Prototyping}
+\section{Experiments}
+\section{DevOps and Microservices}
+\section{Reading Assignment}
+
+
+\newpage
+\section{Lecturenotes}
+\lecture{05?}{2016-05-09} start @ 81
+Für Donnerstag paper mitbringen und Paxos anschauen.
+
+\paragraph{Paxos} (Represent as State-machine) - P. 77
+
+
+Proposer
+
+
+Phase 1
+- Proposer choses Number largr than any value chosen before by Propposer. 
+- Broadcast the integer {\it prepare(n)}, e.g. prepare(50)
+
+Acceptors
+a) Not respond at all
+b) {\it recject} Reject, in case a higher value has been accepted. 50 < something
+b) {\it prommise(n)} in case 50 > everything. Also Send everything that has already been accepted.
+
+If prposer receives majority of prommise respons, -> proceed to Phase 2 ELSE -> Phase 1
+
+Phase 2
+- Check whether any <n, value> have been returned. 
+- YES: take max n's value
+- accept (n, value)
+
+\paragraph{Xtensions Paxos}
+	
+	{\bf Multi-paxos}
+	Determine Leader once
+	Stay in phase 2, attatch the leader identifier
+	Leader is the one to accept values
+	
+	{\it Purpose:  Optimize Speed} (get rid of the first phase, Master-Slave setup)
+	
+	
+	{\bf Fast Paxos}
+	
+	{\bf Generalized Paxos}
+	- Assumption: The execution order does not matter.
+
+\paragraph{CRDT}
+Conflict free / Communitive replicated Datatypes
+
+Some operations are commutative, others not.
+
+State- Based vs. Operation based.
+
+theoretically it is possible to converge them but ... practice
 
 
 
 
+IDEA
+INTEGER  - example: 
+e.g. not store int values but operations (increment / decrement))
+
+SET - example
+
+State - based Set
+
+
+\section{Begriffe und Abkürzungen}
+
+\begin{description}
+	\item[Replication] Strategy to maintain mutiple copies of an entity on multiple Servers.
+	\item[Replica] 
+	\item[CRDT] {\it conflict-free replicated data}
+	\item[Paxos] 
+	\item[Commit] In case a Transaction commits, it is ready.
+	\item[Concurrency control protocol] guarantees isolation of Transactions
+	\item[2PL] Two phase locking (one concurrency control protocol)
+	\item[Snapshot Isolation] other cuncurrency control protocol implementation
+	\item[atomic commitement protocol] guarantees atomaticity
+	\item[2PC] Two phase Commit
+	\item[Transaction Manager] Middleware Component; Manages Atomacity and Isolation of Transactions
+	\item[ACID]  Atomacity + Consistency + Isolation + Durability
+\end{description}
 \end{document}
