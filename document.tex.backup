@@ -328,66 +328,14 @@ Problem: Serialization order must be the same at all replicas.
 % If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
 
 
-\begin{enumerate}
- \item 1 propagate Data  to everybody
- \item Wait until everybody responded 
- \item commit        
-\end{enumerate}
 
- {\color[HTML]{9AB299} 
-- ACID properties apply to all copy updates (no Inconsistencies)}    
+Synchronous
+1 propagate Data  to everybody\\
+2 Wait until everybody responded \\
+3 commit                               
+
+- ACID properties apply to all copy updates (no Inconsistencies)
 {\color[HTML]{A38C8C} -  High response time (high execution time, response time)\\ - Availability (in case one Copy fails)}
-
-
-{\bf Asynchronous}
-\begin{enumerate}
-\item Update local copy
- \item Commit
- \item propagate Data  to everybody
-\end{enumerate}
- {\color[HTML]{9AB299} - Response Time\\ - Availability}    
- 
-{\color[HTML]{A38C8C} 
- 
-- Data inconsistency
-(local read does not always
-1 Update local copy
-return the latest value)
-- No guarantee that the changes
-arrive at each copy
-- Replication is not guaranteed (it is possible that the changes do not reach the replicas at all)
-}
-
-
-
-{\bf Primary Copy}
-
- {\color[HTML]{9AB299} 
- \begin{itemize}
-  \item 
- \end{itemize}
-
- }   
-{\color[HTML]{A38C8C}
- \begin{itemize}
-  \item 
- \end{itemize}
- }
-
-{\bf Update everywhere}
-
- {\color[HTML]{9AB299} 
- \begin{itemize}
-  \item 
- \end{itemize}
-
- }   
-{\color[HTML]{A38C8C}
- \begin{itemize}
-  \item 
- \end{itemize}
- }
-
 %\begin{table}[]
 %	\centering
 %	\caption{My caption}
