@@ -248,7 +248,59 @@
   \maketitle
   \tableofcontents
   \newpage
-\section{Replication and State Management\\ (25.04. - 09.05.)}
+
+\section{Repetition}
+\subsection{ACID}
+
+{\bf Atomiticity}: Either the entire Transaction is executed or it is completely aborted.\\
+{\bf Consistency}: does not mean Data-Consistency but that the transaction produces consistent changes.\\
+{\bf Isolation}: Transactions are isolated from one another\\
+{\bf Durability}: Once the transaction is ready (commits) it remains.
+
+~\\
+Both the Atomitcity and the Isolation are managed by the {\bf Transaction Manager}
+\begin{itemize}
+ \item Aquires locks on behalf of the transactions
+ \item guarantees serializable execution. Therefore, the scheduler only needs to enforce 2PL behavior because serializability is automatically guaranteed in case the transaction follow 2PL
+\end{itemize}
+
+\begin{table}[h]
+ \centering
+% \caption{Protpocols}
+% \label{my-label}
+\begin{tabular}{lll}
+\rowcolor[HTML]{ECF4FF} 
+\textbf{name} & \textbf{protocol's name}     & \textbf{examples of implementations} \\
+\rowcolor[HTML]{F7F7F7} 
+Atomacity     & atomic committement protocol & 2PC                                  \\
+\rowcolor[HTML]{EFEFEF} 
+Isolation     & concurrency control protocol & 2PL, Snapshot isolation             
+\end{tabular}
+\end{table}
+
+
+\subsection{CAP}
+CAP = Consistency vs. Avaiability in case of Partitioning (Replication) Either one has to choose consistency or availability.
+
+Gives information on the system's behavior in case of a system error.
+
+\subsection{PACELC}
+PACELC: partitioning: Avaibaility/Consistency else Latency/Consistency
+
+In case an update request arrives and the data is replicated and the system is working properly,
+there is a time difference between the moment the first replica receives the update and the other replicas are informed.
+Now it's the question whether to 
+\begin{enumerate}
+ \item immeadiately commit the new data {\it (chose the least latency)} or 
+ \item whether not to respond until the 2nd replica respons {\it (chose consistency)} 
+\end{enumerate}
+
+
+
+
+\newpage
+ 
+ \section{Replication and State Management\\ (25.04. - 09.05.)}
 
 
 \subsection{Motivation and Background}
@@ -272,49 +324,30 @@ Process of maintaining multiple Copies of an Entity (Data / Process / File ...)
 	\item Consistency vs. Performance
 \end{itemize}
 \paragraph{Kinds of Replication}
+There are the following three different decisions one needs to take for developing a suitable Replication design:
+\begin{enumerate}
+ \item \glqq Phyiscal Replication\grqq (A), (B) or (C)
+ \item Replication Strategies (Synchronous/Asynchronous PrimaryCopy/Update Everywhere)
+ \item Where to put the Replicas (Geo-distributed?)
+\end{enumerate}
+
+
+\paragraph{decision 1) Replication}
 In general there are the following kinds of \glqq physical\grqq ~Replication. We do only consider (B).\\
 \color{red} !!!!!!!!!!!!!!!!ueberpruefen am Ende!!!!!!!!!!!!!!! \color{black}
-%\grafik{../src/Grafik01}{(A) Improves the availability only in case the Server Replicas use a replica cache coherence mechanism
-%	(B) Improves the availability. Usually ment by the term \glqq Replication \grqq.}
-\paragraph{Replication Strategies}
+\grafik{src/Grafik01}{(A) Improves the availability only in case the Server Replicas use a replica cache coherence mechanism
+	(B) Improves the availability. Usually ment by the term \glqq Replication\grqq.}
+\paragraph{decision 2) Replication Strategies}~\\
+Synchronous / eager vs. Asynchronous / lazy
 
-PAGE 17
+Primary Copy / master vs. Update Everywhere / group
 
-Synchronous vs. Asynchronous
-\begin{description}
-	\item[Synchronous / eager] 
-	\item[Asynchronous / lazy] 
-\end{description}
+\paragraph{decision 3) Replicas' location}
+There are permanent Replicas, they can be geo-distributed or within the LAN
 
-Primary Copy vs. Update Everywhere
-\begin{description}
-	\item[Primary Copy / master] 
-	\item[Update Everywhere / group] 
-\end{description}
-\paragraph{ACID}~\\
+Server-initiated (e.g. Push-Cache) or Client-initiated (e.g. Cache) temporary Replicas exist, too.
 
-\begin{table}
-	
-	Name 				explanation				Protokolltitle 		implementation
-	Atomacity		either perform Transaction entirely or roll-back	atomic commitement protocol	2PC
-	
-	
-	
-\end{table}
-
-Atomiticity: \\
-Consistency: does not mean Data-Consistency but that the transaction produces consistent changes.\\
-Isolation: Transactions are isolated from one another\\
-Durability: Once the transaction is ready (commits) it remains.
-
-~\\
-Both the Atomitcity and the Isolation are managed by the {\bf Transaction Manager}
-\begin{itemize}
- \item Aquires locks on behalf of the transactions
- \item guarantees serializable execution. Therefore, the scheduler only needs to enforce 2PL behavior because serializability is automatically guaranteed in case the transaction follow 2PL
-\end{itemize}
-
-
+Push-Cache: Server record request-history
 
 \paragraph{What happens to ACID in case of Replication?}
 Atomicity can be guaranteed using 2PC (but expensive)
@@ -336,7 +369,8 @@ Problem: Serialization order must be the same at all replicas.
 
  {\color[HTML]{9AB299} 
 - ACID properties apply to all copy updates (no Inconsistencies)}    
-{\color[HTML]{A38C8C} -  High response time (high execution time, response time)\\ - Availability (in case one Copy fails)}
+{\color[HTML]{A38C8C} -  High response time (high execution time, response time)\\
+- Availability (in case one Copy fails)}
 
 
 {\bf Asynchronous}
@@ -361,16 +395,22 @@ arrive at each copy
 
 
 {\bf Primary Copy}
+  Each update is initiated by the Promary Copy
+
 
  {\color[HTML]{9AB299} 
  \begin{itemize}
-  \item 
+  \item (OWN) The order of update can be controled by the primary copy
+  \item No inter-site connection is necessary. All information cross the primary copy
+  \item There's always one page which has got the latest version of the data (primary copy)
  \end{itemize}
 
  }   
 {\color[HTML]{A38C8C}
  \begin{itemize}
-  \item 
+  \item High latency due to high load at Primary Copy
+  \item Single Point of Failure
+  \item Reading local copy does not always yield the latest information
  \end{itemize}
  }
 
@@ -378,16 +418,181 @@ arrive at each copy
 
  {\color[HTML]{9AB299} 
  \begin{itemize}
-  \item 
+  \item There is not a single point of failure
+  \item load is evenly distributed
+  \item Any site can run a transaction 
  \end{itemize}
 
  }   
 {\color[HTML]{A38C8C}
  \begin{itemize}
-  \item 
+  \item Concurrent updates may cause conflicts; No update order can be guaranteed
+  \item Copies must be synchronized. (Workload)
+ \end{itemize}
+ }
+ 
+ 
+ Synchronous Primary Copy
+ 
+ {\color[HTML]{9AB299} 
+ \begin{itemize}
+  \item {\bf Consistency is} guaranteed.
+  \item Updates {\bf don't need to be coordinated}; The transaction order can be guaranteed
+  \item {\bf no deadlocks}
+ \end{itemize}
+
+ }   
+{\color[HTML]{A38C8C}
+ \begin{itemize}
+  \item Longest response time; only useful in case of few updates (primary Copy = Bottleneck)
+  \item Low availability: Single Point of Failure; in case a replica fails, the entire system may be blocked
+  \item Read-only Replicas -- nearly useless
+  \item Scalability Problems duee to primary copy Bottleneck
+  \item[$\Rightarrow$] Not used in practice, therefore no Protocol attatched
+ \end{itemize}
+ }
+ 
+ 
+ Synchronous Update Everywhere
+ 
+ {\color[HTML]{9AB299} 
+ \begin{itemize}
+  \item Elegant, Symmetric solution
+  \item {\bf Consistency} is guaranteed
+  \item {\bf High fault tolerance}
+ \end{itemize}
+
+ }   
+{\color[HTML]{A38C8C}
+ \begin{itemize}
+  \item {\bf Performance} Very high numbers of messages involved -- $2N$ Messages + time for 2PC
+  \item Transaction response time is very long
+  \item {\bf The system will not scale} (get a lot of nodes) because with an increase in the number of nodes comes a higher probability of getting into a deadlock.
+  \item Deadlocks may occur. (the rate depends on the amount of transactions per second, the size of the database and the number of nodes)
+  
+  \item Updates need to be coordinated (update order, parallel updates)
+  \item Low availability
+ \end{itemize}
+ }
+ 
+
+ Asynchronous Primary Copy
+ 
+ {\color[HTML]{9AB299} 
+ \begin{itemize}
+  \item Updates don't need to be coordinated
+  \item Short Response time
+ \end{itemize}
+
+ }   
+{\color[HTML]{A38C8C}
+ \begin{itemize}
+ \item Inconsistencies 
+ \item Local copies may not be up-to-date (due to delay)
+ \item Single Point of Failure,
+ \item Low write availability
  \end{itemize}
  }
 
+ 
+ 
+ Asynchronous update Everywhere
+ 
+ {\color[HTML]{9AB299} 
+ \begin{itemize}
+  \item Shortest Response time
+  \item Not a single point of failure, no centrailized coordination
+  \item High availability
+ \end{itemize}
+
+ }   
+{\color[HTML]{A38C8C}
+ \begin{itemize}
+ \item Updates need to be coordinated
+ \item Inconsistencies and Conflicts, updatese can be lost 
+ \end{itemize}
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ \subsection{Managing Replication}
+ \paragraph{Synchronous Update Everywhere}
+ 
+ {\bf Protocol}
+ Assumption: All sites (Replicas) Contain the same data. Behavior if Transaction is to be executed
+ \begin{itemize}
+  \item Local use of 2PL for the following steps:
+  \item READ only one site, in case the reading fails (timeout), read another copy
+  \item WRITE at all sites (distributed locking protocol). This means that all copies of the data item need to lock the item (REQUEST, OBTAIN LOCK, ACK)\\~. \\
+  IF one site rejects, ABORT. \\
+  ADD All site not responding to a list of {\it missing writes}.
+  \item VALIDATE (=commit) the transaction at the end, this means\\~ \\ 
+  IF NOT ALL the servers {\it missing writes} are down: ABORT \\
+  IF NOT ALL the servers that {\it accepted} are still available: ABORT \\
+  OTHERWISE Commits
+ \end{itemize}
+
+ 
+ 
+ \begin{itemize}
+  \item[$\Rightarrow$] Guarantees behaviour like if the sites were not replicated.
+  \item[$\Rightarrow$]  Execution is serializable
+  \item[$\Rightarrow$]  all Reads access the latest version
+ \end{itemize}
+
+ {\bf Extensions for coping with failures} \\
+ 1. Site failure (reduces the avalability) \\
+ 2. Behavior after the Site that failed is online again (outdated data available)
+ 
+ 
+ 
+ Optimization: Most ideas based on Quorums
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 %\begin{table}[]
 %	\centering
 %	\caption{My caption}
@@ -500,7 +705,7 @@ State - based Set
 	\item[Transaction Manager] Middleware Component; Manages Atomacity and Isolation of Transactions
 	\item[ACID]  Atomacity + Consistency + Isolation + Durability
 	\item[serializability] a plan of executing multiple transactions in pseudo- parallel is called serializable in case the parallel execution comes to the same result as executing the transactions one after the other
-	\item[]
+	\item[distributed locking protocol] 2PL z.b.? ??? Paxos??ß
 	
 \end{description}
 \end{document}
