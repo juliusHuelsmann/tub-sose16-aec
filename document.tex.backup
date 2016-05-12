@@ -436,16 +436,19 @@ arrive at each copy
  
  {\color[HTML]{9AB299} 
  \begin{itemize}
-  \item Consistency is guaranteed.
-  \item Updates don't need to be coordinated; The transaction order can be guaranteed
+  \item {\bf Consistency is} guaranteed.
+  \item Updates {\bf don't need to be coordinated}; The transaction order can be guaranteed
+  \item {\bf no deadlocks}
  \end{itemize}
 
  }   
 {\color[HTML]{A38C8C}
  \begin{itemize}
-  \item Longest response time; only useful in case of few updates
+  \item Longest response time; only useful in case of few updates (primary Copy = Bottleneck)
   \item Low availability: Single Point of Failure; in case a replica fails, the entire system may be blocked
-  \item Read-only Replicas
+  \item Read-only Replicas -- nearly useless
+  \item Scalability Problems duee to primary copy Bottleneck
+  \item[$\Rightarrow$] Not used in practice, therefore no Protocol attatched
  \end{itemize}
  }
  
@@ -462,9 +465,10 @@ arrive at each copy
  }   
 {\color[HTML]{A38C8C}
  \begin{itemize}
-  \item {\bf Performance} Very high numbers of messages involved -- HOW MANY?
-  \item Trnasaction response time is very long
+  \item {\bf Performance} Very high numbers of messages involved -- $2N$ Messages + time for 2PC
+  \item Transaction response time is very long
   \item {\bf The system will not scale} (get a lot of nodes) because with an increase in the number of nodes comes a higher probability of getting into a deadlock.
+  \item Deadlocks may occur. (the rate depends on the amount of transactions per second, the size of the database and the number of nodes)
   
   \item Updates need to be coordinated (update order, parallel updates)
   \item Low availability
@@ -477,13 +481,13 @@ arrive at each copy
  {\color[HTML]{9AB299} 
  \begin{itemize}
   \item Updates don't need to be coordinated
-  \item Short Response time
+  \item {\bf Short Response time}
  \end{itemize}
 
  }   
 {\color[HTML]{A38C8C}
  \begin{itemize}
- \item Inconsistencies 
+ \item {\bf Fault tolerance is limited}, temporary data {\bf inconsistenceis} arise. Inconsistencies 
  \item Local copies may not be up-to-date (due to delay)
  \item Single Point of Failure,
  \item Low write availability
@@ -496,8 +500,8 @@ arrive at each copy
  
  {\color[HTML]{9AB299} 
  \begin{itemize}
-  \item Shortest Response time
-  \item Not a single point of failure, no centrailized coordination
+  \item {\bf Shortest Response time}
+  \item {\bf heigh fault tolerance} Not a single point of failure, no centrailized coordination
   \item High availability
  \end{itemize}
 
@@ -505,7 +509,7 @@ arrive at each copy
 {\color[HTML]{A38C8C}
  \begin{itemize}
  \item Updates need to be coordinated
- \item Inconsistencies and Conflicts, updatese can be lost 
+ \item {\bf Reconciliation} and inconsistenceis, updatese can be lost 
  \end{itemize}
  }
  
@@ -515,18 +519,51 @@ arrive at each copy
  
  
  
+ \paragraph{Quorums}
+ kind of a middleground between syncrhonous and Asynchronous updates.
+ 
+ Reads contact more than one Replica
+ 
+ Write contacts a quorum of Replicas.
+ 
+ Rules:
+ 
+ Read at least $1$ Replica that has received the latest update: $R+W > N$,\\
+ The minimum amount of writes must be greater than half of the amount of replicas $\frac{W}{2} > N$
+ 
+ Quorums that don't follow these rules are called {\bf sloppy Quroums}. (Dynamo + Cassandra)
+ 
+ Used to trade off (+) read and (-) write latency
  
  
  
  
+ \paragraph{Different views on the subject}
+ The solution to Replication strategies in {\it Database-POV} and {\it Distributed Systems-POV} differ, but have converged.
+ 
+ 
+ Distributed System
+ \begin{itemize}
+  \item Set of Services implemented by Server Processes, invoked by client processes
+  \item Each server has got a local state
+  \item Group of servers / group communication -- helps to reduce complexity
+  \item Group communciation primitives: provide 1toMany communication. Example:  Atomic Broadcast (ACAST), View-Syncrhonous Broadcast (VSCAST) 
+ \end{itemize}
+
+ \paragraph{Active Replication}
+ ABCAST guarantees atomacity, sent to everybody 
+ All Servers execute the transaction in the order they arrive
+ Everybody informs the client (which typically takes the first answer).
+ 
+%  Asynchronous Primary Copy
+ \paragraph{Passive Replication}
+%  Syncrhonous Update Everywhere
+ \paragraph{Semi-Active Replication}
+
  
  
  
  
- 
- 
- 
- \subsection{Managing Replication}
  \paragraph{Synchronous Update Everywhere}
  
  {\bf Protocol}
@@ -534,7 +571,7 @@ arrive at each copy
  \begin{itemize}
   \item Local use of 2PL for the following steps:
   \item READ only one site, in case the reading fails (timeout), read another copy
-  \item WRITE at all sites (distributed locking protocol)\\~. \\
+  \item WRITE at all sites (distributed locking protocol). This means that all copies of the data item need to lock the item (REQUEST, OBTAIN LOCK, ACK)\\~. \\
   IF one site rejects, ABORT. \\
   ADD All site not responding to a list of {\it missing writes}.
   \item VALIDATE (=commit) the transaction at the end, this means\\~ \\ 
@@ -557,9 +594,25 @@ arrive at each copy
  
  
  
+ Optimization: Most ideas based on Quorums
  
  
+ \paragraph{Asynchronous Primary Copy}
+ \begin{itemize}
+  \item BOT: Primary Copy receives transaction
+  \item EOT: Primary Copy applies transaction (2PL locally) and COMMITS
+  \item The changes are propagated to all Replicas
+ \end{itemize}
+
  
+ 
+ \paragraph{Asynchronous Update Everywhere}
+ \begin{itemize}
+  \item BOT, W, R, ..., EOT executed locally (2PL locally) (locally committed) 
+  \item Changes are propagated to all other replicas
+  \item Reconciliation (Last update, site priority, value priority, try to merge, rm not important one, priority shemes
+ \end{itemize}
+
  
  
  
