@@ -253,8 +253,8 @@
 \section{Repetition}
 \subsection{ACID}
 
-{\bf Atomiticity}: Either the entire Transaction is executed or it is completely aborted.\\
-{\bf Consistency}: does not mean Data-Consistency but that the transaction produces consistent changes.\\
+{\bf Atomiticity}: Either  entire Transaction  executed or aborted. Update all Replicas or none\\
+{\bf Consistency}: does not mean Data-Consistency but that the transaction produces consistent changes, client-centric / Data-centric, read-my-writes etc..\\
 {\bf Isolation}: Transactions are isolated from one another\\
 {\bf Durability}: Once the transaction is ready (commits) it remains.
 
@@ -262,20 +262,21 @@
 Both the Atomitcity and the Isolation are managed by the {\bf Transaction Manager}
 \begin{itemize}
  \item Aquires locks on behalf of the transactions
- \item guarantees serializable execution. Therefore, the scheduler only needs to enforce 2PL behavior because serializability is automatically guaranteed in case the transaction follow 2PL
+ \item guarantees serializable execution (= strongest form of isolation; outcome = outcome in case sequentially executed). \\
+ guaranteed by use of 2PL
 \end{itemize}
 
 \begin{table}[h]
  \centering
 % \caption{Protpocols}
 % \label{my-label}
-\begin{tabular}{lll}
+\begin{tabular}{llll}
 \rowcolor[HTML]{ECF4FF} 
-\textbf{name} & \textbf{protocol's name}     & \textbf{examples of implementations} \\
+\textbf{name} & \textbf{protocol's name}     & \textbf{bsp implementations}  & \textbf{distrib. syst} \\
 \rowcolor[HTML]{F7F7F7} 
-Atomacity     & atomic committement protocol & 2PC                                  \\
+Atomacity     & atomic committement prot. & 2PC        & easy, expensive                          \\
 \rowcolor[HTML]{EFEFEF} 
-Isolation     & concurrency control protocol & 2PL, Snapshot isolation             
+Isolation     & concurrency control protocol & 2PL, Snapshot isolation   & problematic          
 \end{tabular}
 \end{table}
 
@@ -295,7 +296,7 @@ Now it's the question whether to
  \item immeadiately commit the new data {\it (chose the least latency)} or 
  \item whether not to respond until the 2nd replica respons {\it (chose consistency)} 
 \end{enumerate}
-
+\grafik{zusa2/00.png}{Cap and PACELC}
 
 \subsection{Consistency}
 2 Dimensions:
@@ -330,9 +331,9 @@ Process of maintaining multiple Copies of an Entity (Data / Process / File ...)
 
 \paragraph{Advantages of Replication in General}
 \begin{itemize}
-	\item {\it System Availability / Fault tolerance} in case \\
+	\item {\it System Availability / Fault tolerance / Security} in case \\
 	A \quad Server fails \\
-	B \quad Data is corrputed.
+	B \quad Data is corrputed (vote against data, Byzantine)
 	\item {\it Performance / Scalability } \\
 	A \quad Workloads are spread across distributed Replicas \\
 	B \quad Geodistribution for processing demands in client's proximity
@@ -346,20 +347,19 @@ Process of maintaining multiple Copies of an Entity (Data / Process / File ...)
 There are the following three different decisions one needs to take for developing a suitable Replication design:
 \begin{enumerate}
  \item \glqq Phyiscal Replication\grqq (A), (B) or (C)
- \item Replication Strategies (Synchronous/Asynchronous PrimaryCopy/Update Everywhere)
+ \item Defined access and update Mechanisms(Synchronous/Asynchronous PrimaryCopy/Update Everywhere)
  \item Where to put the Replicas (Geo-distributed?)
 \end{enumerate}
 
 
 \paragraph{decision 1) Replication}
-In general there are the following kinds of \glqq physical\grqq ~Replication. We do only consider (B).\\
-\color{red} !!!!!!!!!!!!!!!!ueberpruefen am Ende!!!!!!!!!!!!!!! \color{black}
+In general there are the following kinds of \glqq physical\grqq ~Replication. We do only consider (B).
 \grafik{src/Grafik01}{(A) Improves the availability only in case the Server Replicas use a replica cache coherence mechanism
 	(B) Improves the availability. Usually ment by the term \glqq Replication\grqq.}
 \paragraph{decision 2) Replication Strategies}~\\
-Synchronous / eager vs. Asynchronous / lazy
+When\qquad Sync./eager vs. Async./lazy\qquad \qquad\qquad\qquad update propagation
 
-Primary Copy / master vs. Update Everywhere / group
+Where\qquad Primary Copy/master vs. upd. Everywhere/group\qquad - location
 
 \paragraph{decision 3) Replicas' location}
 There are permanent Replicas, they can be geo-distributed or within the LAN
@@ -367,6 +367,8 @@ There are permanent Replicas, they can be geo-distributed or within the LAN
 Server-initiated (e.g. Push-Cache) or Client-initiated (e.g. Cache) temporary Replicas exist, too.
 
 Push-Cache: Server record request-history
+
+$\Rightarrow$ Tradeoff between consistency and latency is accentuated
 
 \paragraph{What happens to ACID in case of Replication?}
 Atomicity can be guaranteed using 2PC (but expensive)
@@ -535,12 +537,14 @@ arrive at each copy
  
  \fi
  
- 
+ \newpage
  \subsection{managing Replication}
  
  
  
  
+ \grafik{zusa2/01.png}{Different strategies: Advantages, Disadvantages, Properties}
+ \grafik{zusa2/02.png}{Different strategies: Algorithm in detail}
  
  \paragraph{Synchronous Update Everywhere}
  
@@ -574,7 +578,7 @@ arrive at each copy
  
  Optimization: Most ideas based on Quorums
  
- 
+ \ifcomment
  \paragraph{Asynchronous Primary Copy}
  \begin{itemize}
   \item BOT: Primary Copy receives transaction
@@ -603,7 +607,7 @@ arrive at each copy
  
  
  
- 
+ \fi
  
  
  
@@ -622,7 +626,7 @@ arrive at each copy
  
  Quorums that don't follow these rules are called {\bf sloppy Quroums}. (Dynamo + Cassandra)
  
- Used to trade off (+) read and (-) write latency
+ Used to trade off read and write latency
  
  
  
@@ -639,6 +643,9 @@ arrive at each copy
   \item Group communciation primitives: provide 1toMany communication. Example:  Atomic Broadcast (ACAST), View-Syncrhonous Broadcast (VSCAST) 
  \end{itemize}
 
+
+\grafik{zusa2/03.png}{Distributed system perspective}
+\ifcomment
  \paragraph{Active Replication}
  ABCAST guarantees atomacity, sent to everybody 
  All Servers execute the transaction in the order they arrive
@@ -677,6 +684,28 @@ Each time Replicas have to do a non-deterministic decision, one replica (called 
  
  
  
+ \fi
+ 
+ 
+ 
+ 
+ 
+ \subsubsection{Reconciliation}
+ Who is responsible; When?\\
+ Alternative: Multiversion systems like DynamoDb
+ 
+ pre-arranged patterns:
+ \begin{itemize}
+ 	\item Last update wins (newer updates preferred over old ones)
+ 	\item  Site priority (preference to updates from headquarters)
+ 	\item  Largest value (the larger transaction is preferred
+ \end{itemize}
+ ad-hoc decision making procedures
+ \begin{itemize}
+ 	\item Combination
+ 	\item Analyze and remove not important ones
+ 	\item ...
+ \end{itemize}
  
  
  
@@ -687,42 +716,33 @@ Each time Replicas have to do a non-deterministic decision, one replica (called 
  
  
  
+ \subsubsection{Conclusion}
+ if scalable $\Rightarrow$ Conflicts have to be resolved / appear
  
+ \newpage
+ \subsection{Paxos}
+ case: Conflicts cant be tolerated, using a scalable system. Not applicable for Byzantine failure \\
+ Rules:
+ \begin{enumerate}
+\item exactly one value is chosen
+\item non-triviality (chose one proposed val)
+\item liveness (failure tolerant in case less than half fail)
+ \end{enumerate}
+ Not nPC  because may violate (Rules 1 and 3)
  
+ Client, Proposer, Acceptor, Learner
  
-%\begin{table}[]
-%	\centering
-%	\caption{My caption}
-%	\label{my-label}
-%	\begin{tabular}{|
-%			>{\columncolor[HTML]{C0C0C0}}l |l|
-%			>{\columncolor[HTML]{FFFFFF}}l |}
-%		\hline
-%		& \cellcolor[HTML]{C0C0C0}Procedure                                                                                                                  & \cellcolor[HTML]{C0C0C0}Advantages / Disadvantages                                                                                                                                                                                        \\ \hline
-%		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} \begin{tabular}[c]{@{}l@{}}- ACID (no \\ Inconsistencies)\end{tabular}}                                                                                                                                             \\ \cline{3-3} 
-%		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}}       & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}\end{tabular}} & {\color[HTML]{A38C8C} \begin{tabular}[c]{@{}l@{}}- High response time \\ (high execution time, \\ response time)\\ - Availability \\ (in case one Copy fails)\end{tabular}}                                                               \\ \hline
-%		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} \begin{tabular}[c]{@{}l@{}}- Response Time\\ - Availability\end{tabular}}                                                                                                                                           \\ \cline{3-3} 
-%		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Asynchronous}      & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}1 Update local copy\\ 2 commit\\  3 Propagate Data\end{tabular}}                                  & {\color[HTML]{A38C8C} \begin{tabular}[c]{@{}l@{}}- Data inconsistency \\ (local read does not always \\ return the latest value)\\ - No guarantee that the changes \\ arrive at each copy\\ - Replication is not guaranteed (it cannot be made sure that the data arrives at the replicas)\end{tabular}} \\ \hline
-%		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} }                                                                                                                                                                                                                   \\ \cline{3-3} 
-%		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Primary Copy}      & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}one Primary copy and\\  several read-only copies\end{tabular}}                                         & {\color[HTML]{A38C8C} }                                                                                                                                                                                                                   \\ \hline
-%		\cellcolor[HTML]{C0C0C0}                                    &                                                                                                                                                    & {\color[HTML]{9AB299} }                                                                                                                                                                                                                   \\ \cline{3-3} 
-%		\multirow{-2}{*}{\cellcolor[HTML]{C0C0C0}Update Everywhere} & \multirow{-2}{*}{\begin{tabular}[c]{@{}l@{}}Each site is able to\\  initiate changes\end{tabular}}                                                 & {\color[HTML]{A38C8C} }                                                                                                                                                                                                                   \\ \hline
-%	\end{tabular}
-%\end{table}
+\subsubsection{extensions}
+\paragraph{Multi-Paxos}
 
-
-\newpage
-\subsection{Implications of Replication}
-
-\newpage
-\subsection{Paxos and CRDTs}
-
-
-\section{Prototyping}
-\section{Experiments}
-\section{DevOps and Microservices}
-\section{Reading Assignment}
-
+\paragraph{Fast Paxos}
+\paragraph{Generalized Paxos}
+\subsubsection{Summary Paxos}
+\begin{itemize}
+	\item[$\Rightarrow$] guarantees agreement in the presence of failures, Safety is always preserved
+	\item[$\Rightarrow$]  Conditions to affect liveness are hard to provoke
+	\item[$\Rightarrow$]  Uses same number of message rounds as 2PC
+\end{itemize}
 
 \newpage
 \section{Lecturenotes}
