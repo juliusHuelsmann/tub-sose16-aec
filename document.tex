@@ -180,6 +180,7 @@
 
 \setlength\parindent{0pt}
 
+\newif\ifcomment
 
 
 
@@ -296,8 +297,26 @@ Now it's the question whether to
 \end{enumerate}
 
 
+\subsection{Consistency}
+2 Dimensions:
+\begin{itemize}
+	\item {\bf Staleness} (how much is a given replica lagging behind) vs. {\bf Ordering} (how much does the operation serializable order deviate among replicas)
+	\item {\bf Data-centric} and {\bf Client-centric} consistency
+\end{itemize}
 
-
+\subsubsection{Ordering and Data-centric consistency}
+\begin{itemize}
+\item Sequential Consistency 
+\item Causal consistency
+\item Eventual Consistency
+\end{itemize}
+\subsubsection{Ordering and Client-centric consistency}
+\begin{itemize}
+	\item Monotonic Reads (never receive older values than previously read)
+	\item Read-my-writes (not older than previously written)
+	\item Write follows reads (only update Replicas that have at least got read entity)
+	\item Monotonic Writes (update of one client: always executed sorted by time)
+\end{itemize}
 \newpage
  
  \section{Replication and State Management\\ (25.04. - 09.05.)}
@@ -353,12 +372,10 @@ Push-Cache: Server record request-history
 Atomicity can be guaranteed using 2PC (but expensive)
 Problem: Serialization order must be the same at all replicas.
 
-{\bf Synchronous} 
 
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow}
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+
+\ifcomment
+{\bf Synchronous} 
 
 
 \begin{enumerate}
@@ -514,6 +531,9 @@ arrive at each copy
  }
  
  
+ 
+ 
+ \fi
  
  
  \subsection{managing Replication}
