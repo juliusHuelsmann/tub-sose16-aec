@@ -1,0 +1,414 @@
+%\documentclass[a4paper,12pt]{article}%report
+ 
+ \documentclass[a4paper,12pt]{article}%report
+ % das hier ist eine font
+ %\usepackage{newcent}
+ \usepackage{geometry}
+ \geometry{
+ 	a4paper,
+ 	total={140mm,230mm},
+ 	left=35mm,
+ 	top=40mm,
+ }
+\usepackage{amsthm}
+\usepackage[ngerman]{babel}     
+\usepackage[utf8]{inputenc}      
+\usepackage {amsmath}
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage[arrow, matrix, curve]{xy}
+
+\usepackage{multirow}
+ \usepackage[table,xcdraw]{xcolor}
+\usepackage{textpos}
+
+%\newenvironment{ex}{begdef}{enddef}
+% Theorem und Satz           
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{myDef}[thm]{Definition}
+% \newtheorem{thm}{Satz}[section]
+\newtheorem{ex}{Aufgabe}[section]
+% \newtheorem{myDef}[thm]{Definition}
+\newtheorem{myExmpl}[thm]{Beispiel}
+\newtheorem{myCmmt}[thm]{Bemerkung}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{myKor}[thm]{Korollar}
+\newtheorem{myV}{Veranschaulichung}
+\newtheorem{myLemma}[thm]{Lemma}
+
+\usepackage[table,xcdraw]{xcolor}
+
+\newcommand{\beg}[1]{\textsc{#1}}
+\newcommand{\openEx}[1]{ {\bf Aufgabe #1:}}
+\newcommand{\openAns}{ {\bf Antwort:~}}
+
+% neue eigene shortcuts
+\newcommand{\N}{\mathbbm N}
+\newcommand{\K}{\mathbbm K}
+\newcommand{\R}{\mathbbm R}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\PP}{\mathbbm P}
+%\newcommand{\r}{\mathbbm R}
+\newcommand{\C}{\mathbbm C}
+\newcommand{\Z}{\mathbbm Z}
+\newcommand{\zuZeigen}{ \mathrm{Z\kern-.5em\raise-0.4ex\hbox{Z}}}
+\newcommand{\hnot}[1]{{\it #1}}
+\newcommand{\Hnot}[1]{{\bf #1}}
+
+\newcommand{\refFootnote}[1]{\footnote{#1}}
+\definecolor{rahmen}{rgb}{.7,0.9,0.8}    
+\definecolor{grund}{gray}{.99}           
+\definecolor{schrift_box}{cmyk}{0.9,0.7,0.8,0}   
+\definecolor{whites}{cmyk}{0, 0, 0,0}   
+\definecolor{schrift_normal}{gray}{0}   
+\definecolor{ekelig}{cmyk}{0.1,0.9,0.9,0}   
+\definecolor{ekeligHintergrund}{cmyk}{0.1,0.1,0.9,0}   
+  
+  \newcommand{\defWord}[1]{{\rm #1}}
+\newcommand{\openBox}[1]{
+   \color{grund}
+  
+  \fcolorbox{rahmen}{grund}{\fbox{ \color{schrift_box}\parbox{\dimexpr \linewidth - 2\fboxrule - 2\fboxsep}{#1}}}
+  \color{schrift_normal}}
+  
+\newcommand{\marker}[1]{
+   \color{ekelig}
+\fcolorbox{whites}{ekeligHintergrund}{
+    TODO: #1
+}
+    \color{schrift_normal}}
+  
+\newcommand{\openBoxx}[2]{
+   \color{grund}
+  
+  \fcolorbox{rahmen}{grund}{\fbox{ \color{schrift_box}\parbox{\dimexpr \linewidth - 2\fboxrule - 2\fboxsep}{#1}}{#2}}
+  \color{schrift_normal}}
+  
+% Das hier ist nur so einnkommentiert, da ich auf OS X nicht herausgefunden 
+% habe, wie man mathbbm zum Laufen kriegt.
+%\newcommand{\N}{N}
+%\newcommand{\K}{K}
+%\newcommand{\R}{R}%
+%\newcommand{\C}{C}
+%\newcommand{\Z}{Z}
+%\newcommand{\zuZeigen}{Z}
+
+\newcommand*{\nametag}[1]{%
+  \stepcounter{equation}%
+  \tag{\tagtext{#1}\tagcomma\tagnumber{\theequation}}%
+}
+\makeatletter% <-- anklicken liefert Erklärung
+\newcommand*{\eqnumref}[1]{%
+  \begingroup
+    \let\tagtext\@gobble
+    \let\tagcomma\relax
+    \eqref{#1}%
+  \endgroup
+}
+\newcommand*{\eqtextref}[1]{%
+  \begingroup
+    \let\tagcomma\relax
+    \let\tagnumber\@gobble
+    \ref{#1}%
+  \endgroup
+} 
+
+
+\newcommand{\grafik}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=\linewidth,height=\textheight,
+		keepaspectratio]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+\usepackage{cite}
+
+
+\newcommand{\grafikM}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=12.5cm,height=6.5cm]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+	
+
+\newcommand{\grafikMNon}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=\linewidth]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+
+\newcommand{\grafikMS}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[height=4cm]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+	
+
+\newcommand{\grafikMHalf}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=12.5cm,height=2.5cm]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+
+\usepackage{cite}
+
+
+
+
+\newcommand{\newDef}[1]{ {\bf #1} }
+
+\newcommand{\oldDef}[1]{ {\it #1} }
+
+
+
+
+\usepackage{blindtext}
+
+\usepackage{fancyhdr}%Kopf- und Fußzeile
+\renewcommand{\headrulewidth}{1pt} %Linie oben
+\fancyhf{}
+\fancyhead[L]{\leftmark} %Kopfzeile links bzw. innen
+\fancyhead[R]{\thepage} %Kopfzeile rechts bzw. außen
+
+
+%Das hier ist neu dazugekommen für automatische Wörtertrennung.
+\usepackage{xspace}
+
+
+
+\setlength\parindent{0pt}
+
+\newif\ifcomment
+
+
+
+% zum abaendern wenn die Erklaerungen ausgeblendet werden sollen
+\newcommand{\invisible}[1]{#1}
+
+
+\newcommand{\lecture}[2]{\color{black} 
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.125cm)
+		{\bf Lecture {#1}}
+	\end{textblock*}
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.625cm)
+		#2
+	\end{textblock*}
+}
+\newcommand{\tutorial}[2]{\color{black} 
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.125cm)
+		{\bf Tutorial {#1}}
+	\end{textblock*}
+	
+	\begin{textblock*}{3cm}(-2.4cm,0.625cm)
+		#2
+	\end{textblock*}
+}
+
+
+
+%cpp stuff
+
+%\setmonofont{Consolas} %to be used with XeLaTeX or LuaLaTeX
+\definecolor{bluekeywords}{rgb}{0,0,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.64,0.08,0.08}
+\definecolor{xmlcomments}{rgb}{0.5,0.5,0.5}
+\definecolor{types}{rgb}{0.17,0.57,0.68}
+
+\usepackage{listings}
+\lstset{language=C++,
+	captionpos=b,
+	%numbers=left, %Nummerierung
+	%numberstyle=\tiny, % kleine Zeilennummern
+	frame=lines, % Oberhalb und unterhalb des Listings ist eine Linie
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	escapeinside={(*@}{@*)},
+	commentstyle=\color{greencomments},
+	morekeywords={partial, var, value, get, set},
+	keywordstyle=\color{bluekeywords},
+	stringstyle=\color{redstrings},
+	basicstyle=\ttfamily\small,
+}
+
+
+% \newcommand{\erklaerung}[1]{}
+%opening
+\title{Advanced Enterprise Computing - Lecturenotes SoSe2016}
+\author{Julius Hülsmann}
+	\pagestyle{fancy}
+\begin{document}
+  \maketitle
+  \tableofcontents
+  \newpage
+
+\section{Repetition}
+\subsection{Containerization}
+encapsulate application together with its operating environment
+\subsection{Software-defined Networking}
+Encapsulation: gives access to configuration of "ntwork-layer" without being confronted with the hardware. 
+
+
+Separation into {\bf Control Plane} and {\bf Data Plane}
+\subsubsection{Control Plane}
+Make decision on data's destination\\
+The control plane functions include the system configuration, management, and exchange of routing table information
+\subsubsection{Data Plane}
+Also known as Forwarding Plane\\
+Forwards traffic to the next hop along
+\subsubsection{Example from sdntutorials.com}
+The protocol or application itself doesn't really determine whether the traffic is control, management, or data plane, but more importantly how the router processes it. Consider a 3 router topology with routers R1, R2 and R3. 
+Lets say a Telnet session is established from R1 to R3. On both of these routers the packets need to be handled by the control/management plane. However from R2's perspective this is just data plane traffic that is transiting between its links.
+
+
+\subsection{Continuous Integration}
+Improvement, Automatization of the Deployment organization
+
+\subsubsection{Deployment Pipeline}
+Menge von Validierungen, die eine Software auf ihrem Weg zur Veröffentlichung bestehen muss
+\subsection{Continuous Delivery}
+Improvement of the Deployment organization\\
+Wichtiger Begriff: Deployment pipeline\\
+Laut Wikipedia \glqq Weiterentwicklung\grqq von Continuous Integration, indem extends CI by making sure the software checked in on the mainline is always in a state that can be deployed to users and makes the actual deployment process very rapid.
+\newpage
+\section{Dev-Ops}
+\subsection{Definition and Goals}
+\begin{itemize}
+	\item Set of practices
+	\item [Aim:] 
+	\item Reduce Time between committing and normal Use of the software
+	\item high Quality
+\end{itemize}
+Practices
+\begin{itemize}
+	\item Iterative $\Rightarrow$ ok 4 changing requirements, fast delivery and high-quality
+	\item small teams, improve collabortation dev- \& ops, reduce communication 
+	\item frequent commits, automatic deployment \& testing, early problem detection
+\end{itemize}
+%Knight-Capital
+Influences
+\begin{itemize}
+	\item the way systems are built	
+	\item (incl.) the Organization of Teams
+	\item the structure of the built system
+\end{itemize}
+\grafik{../zusa2/DevOps/01.png}{}
+
+\newpage
+\section{Microservices}
+\subsection{Definition and Motivation}
+Way of developping: 
+\begin{itemize}
+	
+\item architectural style\\
+\item single application = Set of small services (own processes, programming language, databases \item technologies); communication often via EXTERNALIZABLE APIS (often lightweight http)  \\
+\item independently deployable, automatic \\
+\item are minimum of centralized management \\
+\item – no direct linking, no direct reads of another team’s data store,
+– no shared-memory model, no back-doors whatsoever.
+– The only communication allowed is via service interface calls over the network.
+\end{itemize}
+Frage: Wie weit verschachtelt (depth) sind die Microservices?
+
+Unterschied zu Monoliths (all functionallity in one application, scaled by replication)
+Microservice: (Scales by distributing services to replicas; Replication as needed)
+
+
+\subsection{Characteristics of Microservices}
+\begin{enumerate}
+	\item Componentization via Services\\
+	Component = independant, upgradable\\
+	\qquad Explicit dependencies
+\\$\left . \right .$\qquad No specific assumptions on execution environment
+\\$\left . \right .$\qquad Different possible realizations (programming lang.., code structure)
+\\$\left . \right .$\qquad Composable from other software components\\
+	Libraries = Components linked into program; in-memory-function calls\\
+	Service = out of process, Communicate f.i. via http
+		\item Organized around Business Capabilities \\
+		Wenn das Team nach Gruppen sortiert ist Auswirkungen auf Program. Besser ggf mix
+		\item Products not Projects\\
+		you build, you run it vs. nur build
+	\item Smart end points and dumb pipes\\
+	as decoupled and as cohesive as possible, filters in Unix sense
+	\item Decentralized Governance\\
+	Centralized $\Rightarrow$ standartize technology used. Not good
+	\item Decentralized Data Management (= multiple DB with different content)
+	\item Infrastructure Automation\\(= Automated, continuous deployment and testing processes)
+	\item Design for failure\\
+	design to tolerate failures of other services (could fail due to unavailability of the supplier)\\
+	constantly reflect on how service failures affect the user experience
+	\item Evolutionary Design\\
+	granular release planning.
+Monolithic: build and deployment of the entire application. \\
+microservices, only need to redeploy the service(s) you modified
+\end{enumerate}
+
+
+\newpage
+\section{Continuous Engineering}
+
+
+
+
+\grafik{../zusa2/DevOps/02.png}{}
+\paragraph{Probleme}
+Deployment: Es kann sich ändern, wie neu deployter Microservice andere - benutzt und benutzt wird.
+Any deployment team has to be able to deploy at any time
+it takes time to replace one VM
+Service to clients must be maintained
+
+\subsection{Strategies}
+\subsubsection{All-or-nothing (alle Testenden Involved)}
+\begin{itemize}
+	\item Blue-Green or Big Flip Deployment
+	leave N VMs with version A as they are, 
+	allocate and provision N VMs with version B, switch to version B; once stable and release VMs with version A.
+	\item Rolling upgrade
+	()allocate a new VM with version B, release one VM with version A. Repeat N times)
+\end{itemize}
+\begin{table}[h]
+	\centering
+	\label{my-label}
+	\begin{tabular}{|l|l|}
+		\hline
+		Blue-Green                           & Rolling Upgrade      \\ \hline
+		Only one version available at a time & 2 versions available \\ \hline
+		2N VMs                               & N+1 VMs              \\ \hline
+		Rollback easy                        &                      \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsubsection{Partial strategies - kleine Gruppe enduser}
+\begin{itemize}
+	\item Canary testing
+	few servers of a new version, 
+	running in production in order to perform live testing in the real environment
+	Testers. 
+	organization-based (dog-fooding) / geographically based / Rand
+	Rout the specified requests to the testing image (e.g. Load balancer), observe
+	\item A/B Testing
+	Both systems in parallel, tested by someone wo wants new features
+	\item – Chaos / LATENCY Monkey: randomly kills VMs in production
+\end{itemize}
+\newpage
+\section{Doofe Case studies}
+Run virtual plans for each branch – avoids plan drift\\
+– Branch awareness supported by Bamboo
+
+\subsection{1}
+\subsection{2}
+\end{document}

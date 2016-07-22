@@ -126,6 +126,13 @@
 	\end{figure}}
 \usepackage{cite}
 
+\newcommand{\grafikHalf}[2]{\begin{figure}[!htb]
+		\noindent\includegraphics[width=300px,height=\textheight,
+		keepaspectratio]{#1}
+		\caption{\textrm{#2}}%
+	\end{figure}}
+	\usepackage{cite}
+
 
 \newcommand{\grafikM}[2]{\begin{figure}[!htb]
 		\noindent\includegraphics[width=12.5cm,height=6.5cm]{#1}
@@ -340,9 +347,7 @@ Process of maintaining multiple Copies of an Entity (Data / Process / File ...)
 \end{itemize} 
 
 \paragraph{Disadvantages of Replication in General}
-\begin{itemize}
-	\item Consistency vs. Performance
-\end{itemize}
+ Consistency / Performance
 \paragraph{Kinds of Replication}
 There are the following three different decisions one needs to take for developing a suitable Replication design:
 \begin{enumerate}
@@ -350,12 +355,12 @@ There are the following three different decisions one needs to take for developi
  \item Defined access and update Mechanisms(Synchronous/Asynchronous PrimaryCopy/Update Everywhere)
  \item Where to put the Replicas (Geo-distributed?)
 \end{enumerate}
-
+\grafikHalf{src/Grafik01}{(A) Improves availability if Server Replicas use replica cache coherence mechanism
+	(B)Improves availability. Meant by \glqq Replication\grqq 4us.}
 
 \paragraph{decision 1) Replication}
 In general there are the following kinds of \glqq physical\grqq ~Replication. We do only consider (B).
-\grafik{src/Grafik01}{(A) Improves the availability only in case the Server Replicas use a replica cache coherence mechanism
-	(B) Improves the availability. Usually ment by the term \glqq Replication\grqq.}
+
 \paragraph{decision 2) Replication Strategies}~\\
 When\qquad Sync./eager vs. Async./lazy\qquad \qquad\qquad\qquad update propagation
 
@@ -731,12 +736,24 @@ Each time Replicas have to do a non-deterministic decision, one replica (called 
  Not nPC  because may violate (Rules 1 and 3)
  
  Client, Proposer, Acceptor, Learner
- 
+ \grafik{zusa2/paxos.png}{arg2}
 \subsubsection{extensions}
 \paragraph{Multi-Paxos}
+Phases 1 + 2 to determine Leader\\
+– Basically, a master-slave setup with fail-over strategy for the master
 
 \paragraph{Fast Paxos}
+Phases 1 + 2 to determine Leader\\
+Clients directly issue accept requests\\
+Leader reconsiles if necessary
+
+
 \paragraph{Generalized Paxos}
+Phases 1 and 2 determine leader\\
+– Clients directly issue propose requests, acceptors send accepted requests to leader and learners\\
+– Leader reconciles if necessary
+- Assume: The execution Order does not matter
+
 \subsubsection{Summary Paxos}
 \begin{itemize}
 	\item[$\Rightarrow$] guarantees agreement in the presence of failures, Safety is always preserved
@@ -745,10 +762,40 @@ Each time Replicas have to do a non-deterministic decision, one replica (called 
 \end{itemize}
 
 \newpage
+\subsection{Conflict free Replicated data types}
+Situation Async Everywhere, Staleness + Ordering, Ordering to be delt with
+Idea: Design concurrent operations as non-conflicting
+\begin{enumerate}
+	\item State-based\\Define a deterministic merge function that fulfills a set of formal requirements
+	\item Operation-based \\ Define commutative operations that are called
+\end{enumerate}
+both can theoretically converge
+
+\subsubsection{Summary CRDTs}
+
+\paragraph{Advantage}
+- Ensure convergence 
+- without Application level conflict resolution\\
+- without Low performance due to consensus\\
+- without Lost updates,\\
+- Hide complexity of building distributed systems\\
+- Allow clear design of concurrent semantics\\
+
+\paragraph{Disadvantage} 
+- Limited in applicability due to - lack of global invariants\\
+- supported data types and semantics,\\
+- performance constraints (communication overhead)\\
+- storage volume constraints (tombstones, internal type overhead)
+
+\paragraph{Conclusion}
+$\Rightarrow$ An elegant solution for special use cases but cannot replace general purpose database systems
+
+\newpage
+
+\ifcomment
 \section{Lecturenotes}
 \lecture{05?}{2016-05-09} start @ 81
 Für Donnerstag paper mitbringen und Paxos anschauen.
-
 \paragraph{Paxos} (Represent as State-machine) - P. 77
 
 
@@ -805,7 +852,7 @@ e.g. not store int values but operations (increment / decrement))
 SET - example
 
 State - based Set
-
+\fi
 
 \section{Begriffe und Abkürzungen}
 
